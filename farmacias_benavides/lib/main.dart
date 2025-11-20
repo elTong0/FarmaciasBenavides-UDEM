@@ -215,8 +215,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLogo() {
     return Center(
-      child: Image.network(
-        'https://upload.wikimedia.org/wikipedia/commons/f/f4/Farmacias_Benavides_logo.svg',
+      child: Image.asset(
+        'assets/images/LogoBenamedic.png',
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
           return const Icon(
