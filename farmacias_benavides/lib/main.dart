@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 void main() {
   runApp(const MyApp());
@@ -218,11 +219,29 @@ class _LoginPageState extends State<LoginPage> {
       child: Image.asset(
         'assets/images/LogoBenamedic.png',
         fit: BoxFit.contain,
+        width: 300,
+        height: 300,
         errorBuilder: (context, error, stackTrace) {
-          return const Icon(
-            Icons.local_pharmacy,
-            size: 200,
-            color: Color(0xFFDA291C),
+          debugPrint('Error cargando imagen: $error');
+          debugPrint('Stack trace: $stackTrace');
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.local_pharmacy,
+                size: 200,
+                color: Color(0xFFDA291C),
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Error cargando imagen\nVer consola para detalles',
+                  style: const TextStyle(fontSize: 12, color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
           );
         },
       ),
