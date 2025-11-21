@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'dashboard_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,18 +36,15 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   void _login() {
-    // Simulación de login
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Inicio de sesión'),
-        content: const Text('¡Inicio de sesión simulado!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
+    // Obtener el nombre de usuario (si está vacío, usar un valor por defecto)
+    final userName = _usuarioController.text.trim().isEmpty
+        ? 'Usuario'
+        : _usuarioController.text.trim();
+
+    // Navegar al dashboard pasando el nombre de usuario
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => DashboardPage(userName: userName),
       ),
     );
   }
@@ -217,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildLogo() {
     return Center(
       child: Image.asset(
-        'assets/images/LogoBenamedic.png',
+        'assets/images/Farmacia-Benavides-Logo.png',
         fit: BoxFit.contain,
         width: 300,
         height: 300,
