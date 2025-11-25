@@ -1,18 +1,45 @@
 import 'package:flutter/material.dart';
 
+import 'resultados_busqueda_page.dart';
+
 // Colores base
 const Color primaryColor = Color(0xFFB61B2E);
 const Color backgroundColor = Color(0xFFFFF9FA);
 const Color searchColor = Color(0xFFF4EAEA);
 const Color textColor = Color(0xFF3B3B3B);
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   final String userName;
 
   const DashboardPage({
     super.key,
     required this.userName,
   });
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _openSearchResults() {
+    final query = _searchController.text.trim();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ResultadosBusquedaPage(
+          query: query,
+          userName: widget.userName,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +112,7 @@ class DashboardPage extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                userName,
+                widget.userName,
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Colors.black87,
@@ -123,13 +150,22 @@ class DashboardPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextField(
-        decoration: const InputDecoration(
+        controller: _searchController,
+        decoration: InputDecoration(
           hintText: 'Buscar paciente por nombre o ID',
-          hintStyle: TextStyle(color: Color(0xFFB67A7A)),
-          prefixIcon: Icon(Icons.search, color: primaryColor),
+          hintStyle: const TextStyle(color: Color(0xFFB67A7A)),
+          prefixIcon: const Icon(Icons.search, color: primaryColor),
+          suffixIcon: IconButton(
+            onPressed: _openSearchResults,
+            icon: const Icon(Icons.arrow_forward_ios,
+                color: primaryColor, size: 18),
+          ),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 14),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
         ),
+        textInputAction: TextInputAction.search,
+        onSubmitted: (_) => _openSearchResults(),
       ),
     );
   }
@@ -137,7 +173,7 @@ class DashboardPage extends StatelessWidget {
   // Sección de pacientes
   Widget _buildRecentPatients() {
     final patients = [
-      {'name': 'Sofía Rodríguez', 'date': '15 de Mayo, 2024'},
+      {'name': 'Sofía Ramírez', 'date': '15 de Mayo, 2024'},
       {'name': 'Carlos Pérez', 'date': '20 de Abril, 2024'},
       {'name': 'Ana García', 'date': '10 de Marzo, 2024'},
       {'name': 'Luis Martínez', 'date': '5 de Febrero, 2024'},
@@ -184,9 +220,17 @@ class DashboardPage extends StatelessWidget {
                     Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      child: Text("Fecha de Última Consulta",
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "Fecha de Última Consulta",
+                          textAlign: TextAlign.right,
                           style: TextStyle(
-                              fontWeight: FontWeight.w700, color: textColor)),
+                            fontWeight: FontWeight.w700,
+                            color: textColor,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
