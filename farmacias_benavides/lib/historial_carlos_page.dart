@@ -45,6 +45,7 @@ class HistorialMedicoCarlosPage extends StatelessWidget {
                   ['Dirección', 'Av. Central 456, Ciudad, Estado'],
                   ['Teléfono', '555-9876'],
                   ['Correo Electrónico', 'carlos.perez@email.com'],
+                  ['CURP', 'PELC900420HDFRRL05'],
                   ['Ocupación', 'Ingeniero de Sistemas'],
                 ]),
                 const SizedBox(height: 36),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../dashboard_page.dart';
+
 class Navbar extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
 
@@ -29,10 +31,10 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           const SizedBox(width: 30),
-          _navItem('Inicio'),
-          _navItem('Pacientes'),
-          _navItem('Citas'),
-          _navItem('Recetas'),
+          _navItem(context, 'Inicio', onTap: () => _navigateHome(context)),
+          _navItem(context, 'Pacientes'),
+          _navItem(context, 'Citas'),
+          _navItem(context, 'Recetas'),
           const Spacer(),
           Row(
             children: [
@@ -56,16 +58,30 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _navItem(String title) {
+  void _navigateHome(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (_) => DashboardPage(userName: userName),
+      ),
+      (route) => false,
+    );
+  }
+
+  Widget _navItem(BuildContext context, String title,
+      {VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.black87,
-            fontSize: 15,
+        cursor: onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Text(
+            title,
+            style: TextStyle(
+              color: onTap != null ? Colors.black87 : Colors.black54,
+              fontSize: 15,
+              fontWeight: onTap != null ? FontWeight.w600 : FontWeight.normal,
+            ),
           ),
         ),
       ),

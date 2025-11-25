@@ -45,6 +45,7 @@ class HistorialMedicoSofiaPage extends StatelessWidget {
                   ['Dirección', 'Calle Principal 123, Ciudad, Estado'],
                   ['Teléfono', '555-1234'],
                   ['Correo Electrónico', 'sofia.ramirez@email.com'],
+                  ['CURP', 'SARS880315MDFRMF08'],
                   ['Ocupación', 'Profesora'],
                 ]),
                 const SizedBox(height: 36),

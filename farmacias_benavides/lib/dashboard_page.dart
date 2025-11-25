@@ -80,28 +80,11 @@ class _DashboardPageState extends State<DashboardPage> {
             },
           ),
           const SizedBox(width: 40),
-          _buildNavItem("Inicio"),
+          _buildNavItem("Inicio", onTap: _navigateHome),
           _buildNavItem("Pacientes"),
           _buildNavItem("Recetas"),
           _buildNavItem("Citas"),
           const Spacer(),
-          Container(
-            height: 38,
-            width: 160,
-            decoration: BoxDecoration(
-              color: searchColor,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: const [
-                SizedBox(width: 10),
-                Icon(Icons.search, color: primaryColor, size: 18),
-                SizedBox(width: 5),
-                Text("Search", style: TextStyle(color: primaryColor)),
-              ],
-            ),
-          ),
-          const SizedBox(width: 20),
           // Mostrar nombre de usuario con avatar
           Row(
             children: [
@@ -125,16 +108,28 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildNavItem(String title) {
+  void _navigateHome() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => DashboardPage(userName: widget.userName),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(String title, {VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
+        cursor:
+            onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: onTap != null ? Colors.black87 : Colors.black54,
+            ),
           ),
         ),
       ),
@@ -155,11 +150,6 @@ class _DashboardPageState extends State<DashboardPage> {
           hintText: 'Buscar paciente por nombre o ID',
           hintStyle: const TextStyle(color: Color(0xFFB67A7A)),
           prefixIcon: const Icon(Icons.search, color: primaryColor),
-          suffixIcon: IconButton(
-            onPressed: _openSearchResults,
-            icon: const Icon(Icons.arrow_forward_ios,
-                color: primaryColor, size: 18),
-          ),
           border: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
@@ -276,41 +266,20 @@ class _DashboardPageState extends State<DashboardPage> {
               style: TextStyle(
                   fontSize: 20, fontWeight: FontWeight.w700, color: textColor)),
           const SizedBox(height: 20),
-          Wrap(
-            spacing: 20,
-            children: [
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text("Nuevo Paciente"),
-                ),
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: textColor,
-                    side: const BorderSide(color: Color(0xFFD9CACA)),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    backgroundColor: const Color(0xFFF8EEEE),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 25, vertical: 14),
-                  ),
-                  child: const Text("Ver Historial"),
-                ),
-              ),
-            ],
+              child: const Text("Nuevo Paciente"),
+            ),
           ),
         ],
       ),
