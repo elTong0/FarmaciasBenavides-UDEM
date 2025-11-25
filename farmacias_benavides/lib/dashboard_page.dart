@@ -79,8 +79,8 @@ class DashboardPage extends StatelessWidget {
           Row(
             children: [
               const CircleAvatar(
-                backgroundImage: NetworkImage(
-                    'https://randomuser.me/api/portraits/women/44.jpg'),
+                backgroundImage:
+                    AssetImage('assets/images/Doctor.jpg'),
                 radius: 19,
               ),
               const SizedBox(width: 10),

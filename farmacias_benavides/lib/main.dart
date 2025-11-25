@@ -42,7 +42,8 @@ class _LoginPageState extends State<LoginPage> {
         : _usuarioController.text.trim();
 
     // Navegar al dashboard pasando el nombre de usuario
-    Navigator.of(context).pushReplacement(
+    Navigator.pushReplacement(
+      context,
       MaterialPageRoute(
         builder: (context) => DashboardPage(userName: userName),
       ),
