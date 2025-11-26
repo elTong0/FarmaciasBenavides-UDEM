@@ -16,10 +16,10 @@ class ResultadosBusquedaPage extends StatelessWidget {
   });
 
   List<Map<String, String>> get _pacientes => const [
-        {'nombre': 'Sofía Ramírez', 'fecha': '15/03/1985'},
-        {'nombre': 'Carlos Pérez', 'fecha': '20/04/1990'},
-      {'nombre': 'Carlos Mendoza', 'fecha': '22/07/1992'},
-        {'nombre': 'Ana López', 'fecha': '10/11/1978'},
+        {'id': 'sofia', 'nombre': 'Sofía Ramírez', 'fecha': '15/03/1988'},
+        {'id': 'carlos', 'nombre': 'Carlos Pérez', 'fecha': '20/04/1990'},
+        {'id': 'carlos_m', 'nombre': 'Carlos Mendoza', 'fecha': '22/07/1992'},
+        {'id': 'ana', 'nombre': 'Ana López', 'fecha': '10/11/1978'},
       ];
 
   @override
@@ -72,7 +72,8 @@ class ResultadosBusquedaPage extends StatelessWidget {
                   ...resultados.map(
                     (p) {
                       final nombre = p['nombre']!;
-                      final canNavigate = _hasDetailPage(nombre);
+                      final id = p['id']!;
+                      final canNavigate = _hasDetailPage(id);
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 28.0),
                         child: PacienteItem(
@@ -80,7 +81,11 @@ class ResultadosBusquedaPage extends StatelessWidget {
                           fecha: p['fecha']!,
                           isMobile: isMobile,
                           onSelect: canNavigate
-                              ? () => _navigateToPatientDetail(context, nombre)
+                              ? () => _navigateToPatientDetail(
+                                    context,
+                                    id,
+                                    nombre,
+                                  )
                               : null,
                         ),
                       );
@@ -94,13 +99,15 @@ class ResultadosBusquedaPage extends StatelessWidget {
     );
   }
 
-  void _navigateToPatientDetail(BuildContext context, String nombre) {
+  void _navigateToPatientDetail(
+    BuildContext context,
+    String patientId,
+    String nombre,
+  ) {
     Widget? destination;
-    if (nombre.toLowerCase() == 'sofía ramírez' ||
-        nombre.toLowerCase() == 'sofia ramírez') {
+    if (patientId == 'sofia') {
       destination = HistorialMedicoSofiaPage(userName: userName);
-    } else if (nombre.toLowerCase() == 'carlos pérez' ||
-        nombre.toLowerCase() == 'carlos perez') {
+    } else if (patientId == 'carlos') {
       destination = HistorialMedicoCarlosPage(userName: userName);
     }
 
@@ -112,11 +119,7 @@ class ResultadosBusquedaPage extends StatelessWidget {
     }
   }
 
-  bool _hasDetailPage(String nombre) {
-    final normalized = nombre.toLowerCase();
-    return normalized == 'sofía ramírez' ||
-        normalized == 'sofia ramírez' ||
-        normalized == 'carlos pérez' ||
-        normalized == 'carlos perez';
+  bool _hasDetailPage(String id) {
+    return id == 'sofia' || id == 'carlos';
   }
 }

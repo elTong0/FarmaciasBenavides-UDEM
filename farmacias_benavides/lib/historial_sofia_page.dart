@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'data/patient_repository.dart';
+import 'antecedentes_medicos_page.dart';
 import 'widgets/navbar.dart';
 
 class HistorialMedicoSofiaPage extends StatefulWidget {
@@ -23,6 +25,17 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
   ];
 
   int _selectedTab = 0;
+  late PatientRecord _record;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecord();
+  }
+
+  void _loadRecord() {
+    _record = PatientRepository.instance.getRecord('sofia');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,11 +116,11 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
           children: [
             _sectionTitle('Información del Paciente'),
             const SizedBox(height: 12),
-            _infoGrid(isMobile, const [
+            _infoGrid(isMobile, [
               ['Nombre', 'Sofía Ramírez'],
               ['Fecha de Nacimiento', '15 de marzo de 1988'],
               ['Género', 'Femenino'],
-              ['Grupo Sanguíneo', 'O+'],
+              ['Grupo Sanguíneo', _record.tipoSangre],
               ['Dirección', 'Calle Principal 123, Ciudad, Estado'],
               ['Teléfono', '555-1234'],
               ['Correo Electrónico', 'sofia.ramirez@email.com'],
@@ -115,12 +128,15 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
               ['Ocupación', 'Profesora'],
             ]),
             const SizedBox(height: 36),
-            _sectionTitle('Antecedentes Médicos'),
+            _sectionTitle(
+              'Antecedentes Médicos',
+              onEdit: _openAntecedentesMedicos,
+            ),
             const SizedBox(height: 12),
-            _infoGrid(isMobile, const [
-              ['Enfermedades Crónicas', 'Asma diagnosticada en 2005'],
-              ['Cirugías Previas', 'Apéndice (2010)'],
-              ['Hospitalizaciones Recientes', 'Ninguna desde 2021'],
+            _infoGrid(isMobile, [
+              ['Enfermedades Crónicas', _record.enfermedadesCronicas],
+              ['Cirugías Previas', _record.cirugiasPrevias],
+              ['Vacunas', _record.vacunas],
             ]),
             const SizedBox(height: 36),
             _sectionTitle('Historial Familiar'),
@@ -138,10 +154,10 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
           children: [
             _sectionTitle('Medicamentos Actuales'),
             const SizedBox(height: 12),
-            _infoGrid(isMobile, const [
-              ['Montelukast 10 mg', '1 tableta cada noche'],
-              ['Salbutamol inhalador', '2 inhalaciones según necesidad'],
-              ['Vitamina D', '1 cápsula semanal'],
+            _infoGrid(isMobile, [
+              ['Medicamento principal', _record.medicamentosActuales],
+              ['Inhalador de rescate', 'Salbutamol según necesidad'],
+              ['Suplementos', 'Vitamina D - 1 cápsula semanal'],
             ]),
             const SizedBox(height: 24),
             _sectionTitle('Indicaciones'),
@@ -158,10 +174,10 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
           children: [
             _sectionTitle('Alergias Registradas'),
             const SizedBox(height: 12),
-            _infoGrid(isMobile, const [
-              ['Penicilina', 'Reacción cutánea moderada'],
-              ['Polen de álamo', 'Estornudos y lagrimeo'],
+            _infoGrid(isMobile, [
+              ['Alergia principal', _record.alergias],
               ['Polvo doméstico', 'Causa episodios leves de asma'],
+              ['Polen de álamo', 'Estornudos y lagrimeo'],
             ]),
             const SizedBox(height: 24),
             _sectionTitle('Tratamiento Preventivo'),
@@ -195,14 +211,42 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
     }
   }
 
-  Widget _sectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-        color: Color(0xFF2E0D0C),
+  Future<void> _openAntecedentesMedicos() async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => AntecedentesMedicosPage(
+          userName: widget.userName,
+          patientName: 'Sofía Ramírez',
+          patientId: 'sofia',
+        ),
       ),
+    );
+    if (updated == true) {
+      setState(() {
+        _loadRecord();
+      });
+    }
+  }
+
+  Widget _sectionTitle(String title, {VoidCallback? onEdit}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Color(0xFF2E0D0C),
+          ),
+        ),
+        if (onEdit != null)
+          IconButton(
+            tooltip: 'Editar $title',
+            onPressed: onEdit,
+            icon: const Icon(Icons.edit_outlined, color: Color(0xFFB61B2E)),
+          ),
+      ],
     );
   }
 

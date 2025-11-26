@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'data/patient_repository.dart';
+import 'antecedentes_medicos_page.dart';
 import 'widgets/navbar.dart';
 
 class HistorialMedicoCarlosPage extends StatefulWidget {
@@ -24,6 +26,17 @@ class _HistorialMedicoCarlosPageState
   ];
 
   int _selectedTab = 0;
+  late PatientRecord _record;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecord();
+  }
+
+  void _loadRecord() {
+    _record = PatientRepository.instance.getRecord('carlos');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,11 +117,11 @@ class _HistorialMedicoCarlosPageState
           children: [
             _sectionTitle('Información del Paciente'),
             const SizedBox(height: 12),
-            _infoGrid(isMobile, const [
+            _infoGrid(isMobile, [
               ['Nombre', 'Carlos Pérez'],
               ['Fecha de Nacimiento', '20 de abril de 1990'],
               ['Género', 'Masculino'],
-              ['Grupo Sanguíneo', 'A+'],
+              ['Grupo Sanguíneo', _record.tipoSangre],
               ['Dirección', 'Av. Central 456, Ciudad, Estado'],
               ['Teléfono', '555-9876'],
               ['Correo Electrónico', 'carlos.perez@email.com'],
@@ -116,12 +129,15 @@ class _HistorialMedicoCarlosPageState
               ['Ocupación', 'Ingeniero de Sistemas'],
             ]),
             const SizedBox(height: 36),
-            _sectionTitle('Antecedentes Médicos'),
+            _sectionTitle(
+              'Antecedentes Médicos',
+              onEdit: _openAntecedentesMedicos,
+            ),
             const SizedBox(height: 12),
-            _infoGrid(isMobile, const [
-              ['Enfermedades Crónicas', 'Hipertensión controlada'],
-              ['Cirugías Previas', 'Ninguna'],
-              ['Hospitalizaciones', 'Observación por hipertensión (2018)'],
+            _infoGrid(isMobile, [
+              ['Enfermedades Crónicas', _record.enfermedadesCronicas],
+              ['Cirugías Previas', _record.cirugiasPrevias],
+              ['Vacunas', _record.vacunas],
             ]),
             const SizedBox(height: 36),
             _sectionTitle('Estilo de Vida'),
@@ -139,8 +155,8 @@ class _HistorialMedicoCarlosPageState
           children: [
             _sectionTitle('Medicamentos Actuales'),
             const SizedBox(height: 12),
-            _infoGrid(isMobile, const [
-              ['Lisinopril 10 mg', '1 tableta cada mañana'],
+            _infoGrid(isMobile, [
+              ['Medicamento principal', _record.medicamentosActuales],
               ['Aspirina 81 mg', '1 tableta diaria con alimentos'],
               ['Omega-3', '2 cápsulas al día'],
             ]),
@@ -160,8 +176,8 @@ class _HistorialMedicoCarlosPageState
           children: [
             _sectionTitle('Alergias Registradas'),
             const SizedBox(height: 12),
-            _infoGrid(isMobile, const [
-              ['Penicilina', 'Reacción cutánea leve en 2016'],
+            _infoGrid(isMobile, [
+              ['Alergia principal', _record.alergias],
               ['Mariscos', 'Irritación estomacal moderada'],
               ['Polen', 'Congestión nasal en primavera'],
             ]),
@@ -199,14 +215,42 @@ class _HistorialMedicoCarlosPageState
     }
   }
 
-  Widget _sectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-        color: Color(0xFF2E0D0C),
+  Future<void> _openAntecedentesMedicos() async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => AntecedentesMedicosPage(
+          userName: widget.userName,
+          patientName: 'Carlos Pérez',
+          patientId: 'carlos',
+        ),
       ),
+    );
+    if (updated == true) {
+      setState(() {
+        _loadRecord();
+      });
+    }
+  }
+
+  Widget _sectionTitle(String title, {VoidCallback? onEdit}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Color(0xFF2E0D0C),
+          ),
+        ),
+        if (onEdit != null)
+          IconButton(
+            tooltip: 'Editar $title',
+            onPressed: onEdit,
+            icon: const Icon(Icons.edit_outlined, color: Color(0xFFB61B2E)),
+          ),
+      ],
     );
   }
 
