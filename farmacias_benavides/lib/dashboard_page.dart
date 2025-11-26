@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'nuevo_paciente_page.dart';
 import 'resultados_busqueda_page.dart';
 
 // Colores base
@@ -39,6 +40,21 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _openNewPatientForm() async {
+    final created = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => NuevoPacientePage(userName: widget.userName),
+      ),
+    );
+    if (created == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nuevo paciente registrado.'),
+        ),
+      );
+    }
   }
 
   @override
@@ -269,7 +285,7 @@ class _DashboardPageState extends State<DashboardPage> {
           MouseRegion(
             cursor: SystemMouseCursors.click,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: _openNewPatientForm,
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
                 foregroundColor: Colors.white,

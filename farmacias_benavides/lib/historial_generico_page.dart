@@ -4,20 +4,23 @@ import 'data/patient_repository.dart';
 import 'antecedentes_medicos_page.dart';
 import 'widgets/navbar.dart';
 
-class HistorialMedicoCarlosPage extends StatefulWidget {
+class HistorialMedicoGenericoPage extends StatefulWidget {
   final String userName;
-  const HistorialMedicoCarlosPage({
+  final String patientId;
+
+  const HistorialMedicoGenericoPage({
     super.key,
     required this.userName,
+    required this.patientId,
   });
 
   @override
-  State<HistorialMedicoCarlosPage> createState() =>
-      _HistorialMedicoCarlosPageState();
+  State<HistorialMedicoGenericoPage> createState() =>
+      _HistorialMedicoGenericoPageState();
 }
 
-class _HistorialMedicoCarlosPageState
-    extends State<HistorialMedicoCarlosPage> {
+class _HistorialMedicoGenericoPageState
+    extends State<HistorialMedicoGenericoPage> {
   final List<String> _tabs = const [
     'Antecedentes Personales',
     'Medicamentos Actuales',
@@ -32,13 +35,13 @@ class _HistorialMedicoCarlosPageState
   @override
   void initState() {
     super.initState();
-    _loadRecord();
+    _loadData();
   }
 
-  void _loadRecord() {
+  void _loadData() {
     final repo = PatientRepository.instance;
-    _record = repo.getRecord('carlos');
-    _details = repo.getDetails('carlos');
+    _record = repo.getRecord(widget.patientId);
+    _details = repo.getDetails(widget.patientId);
   }
 
   @override
@@ -56,9 +59,9 @@ class _HistorialMedicoCarlosPageState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                const Text(
-                  'Historial Médico de Carlos Pérez',
-                  style: TextStyle(
+                Text(
+                  'Historial Médico de ${_details.nombre}',
+                  style: const TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF2E0D0C),
@@ -143,12 +146,11 @@ class _HistorialMedicoCarlosPageState
               ['Vacunas', _record.vacunas],
             ]),
             const SizedBox(height: 36),
-            _sectionTitle('Estilo de Vida'),
+            _sectionTitle('Historial Familiar'),
             const SizedBox(height: 12),
             _infoGrid(isMobile, [
-              ['Actividad Física', 'Corre 3 veces por semana'],
-              ['Consumo de Alcohol', 'Ocasional'],
-              ['Tabaquismo', 'No fumador'],
+              ['Antecedentes Hereditarios', _details.antecedentesFamiliares],
+              ['Notas adicionales', _details.historialFamiliarNotas],
             ]),
           ],
         );
@@ -160,16 +162,15 @@ class _HistorialMedicoCarlosPageState
             const SizedBox(height: 12),
             _infoGrid(isMobile, [
               ['Medicamento principal', _record.medicamentosActuales],
-              ['Aspirina 81 mg', '1 tableta diaria con alimentos'],
-              ['Omega-3', '2 cápsulas al día'],
+              ['Suplementos', 'N/A'],
+              ['Indicaciones especiales', 'N/A'],
             ]),
             const SizedBox(height: 24),
-            _sectionTitle('Monitoreo'),
+            _sectionTitle('Indicaciones'),
             const SizedBox(height: 12),
             _infoGrid(isMobile, const [
-              ['Presión arterial', 'Promedio 125/80 mmHg en casa'],
-              ['Seguimiento', 'Control mensual con cardiólogo'],
-              ['Indicaciones', 'Reducir consumo de sodio y azúcares'],
+              ['Seguimiento', 'Consultar con médico tratante'],
+              ['Recomendaciones', 'Mantener actividad física moderada'],
             ]),
           ],
         );
@@ -181,16 +182,14 @@ class _HistorialMedicoCarlosPageState
             const SizedBox(height: 12),
             _infoGrid(isMobile, [
               ['Alergia principal', _record.alergias],
-              ['Mariscos', 'Irritación estomacal moderada'],
-              ['Polen', 'Congestión nasal en primavera'],
+              ['Notas', 'Actualizar con información adicional'],
             ]),
             const SizedBox(height: 24),
             _sectionTitle('Medidas Preventivas'),
             const SizedBox(height: 12),
             _infoGrid(isMobile, const [
-              ['EpiPen', 'Disponible en botiquín personal'],
-              ['Dieta', 'Evita mariscos y productos derivados'],
-              ['Antihistamínicos', 'Cetirizina 10 mg según necesidad'],
+              ['Plan de acción', 'Disponibilidad de antihistamínicos'],
+              ['Recomendaciones', 'Evitar desencadenantes conocidos'],
             ]),
           ],
         );
@@ -202,16 +201,13 @@ class _HistorialMedicoCarlosPageState
             _sectionTitle('Consultas Anteriores'),
             const SizedBox(height: 12),
             _infoGrid(isMobile, const [
-              ['10 Ene 2024', 'Control de hipertensión, sin cambios'],
-              ['15 Ago 2023', 'Chequeo general, colesterol en rango'],
-              ['22 Mar 2023', 'Evaluación de estrés laboral'],
+              ['Sin registros', 'Agrega consultas en la próxima visita'],
             ]),
             const SizedBox(height: 24),
             _sectionTitle('Próximas Citas'),
             const SizedBox(height: 12),
             _infoGrid(isMobile, const [
-              ['05 Mar 2025', 'Consulta cardiología preventiva'],
-              ['18 Jul 2025', 'Examen general anual'],
+              ['Pendiente', 'Define la próxima revisión'],
             ]),
           ],
         );
@@ -230,7 +226,7 @@ class _HistorialMedicoCarlosPageState
     );
     if (updated == true) {
       setState(() {
-        _loadRecord();
+        _loadData();
       });
     }
   }
@@ -270,7 +266,7 @@ class _HistorialMedicoCarlosPageState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(label,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: leftColor, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 4),
                     Text(value),
@@ -281,7 +277,7 @@ class _HistorialMedicoCarlosPageState
                   children: [
                     Expanded(
                       child: Text(label,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: leftColor, fontWeight: FontWeight.w600)),
                     ),
                     Expanded(
@@ -294,3 +290,4 @@ class _HistorialMedicoCarlosPageState
     );
   }
 }
+

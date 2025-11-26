@@ -26,6 +26,7 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
 
   int _selectedTab = 0;
   late PatientRecord _record;
+  late PatientDetails _details;
 
   @override
   void initState() {
@@ -34,7 +35,9 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
   }
 
   void _loadRecord() {
-    _record = PatientRepository.instance.getRecord('sofia');
+    final repo = PatientRepository.instance;
+    _record = repo.getRecord('sofia');
+    _details = repo.getDetails('sofia');
   }
 
   @override
@@ -117,15 +120,15 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
             _sectionTitle('Información del Paciente'),
             const SizedBox(height: 12),
             _infoGrid(isMobile, [
-              ['Nombre', 'Sofía Ramírez'],
-              ['Fecha de Nacimiento', '15 de marzo de 1988'],
-              ['Género', 'Femenino'],
+              ['Nombre', _details.nombre],
+              ['Fecha de Nacimiento', _details.fechaNacimiento],
+              ['Género', _details.genero],
               ['Grupo Sanguíneo', _record.tipoSangre],
-              ['Dirección', 'Calle Principal 123, Ciudad, Estado'],
-              ['Teléfono', '555-1234'],
-              ['Correo Electrónico', 'sofia.ramirez@email.com'],
-              ['CURP', 'SARS880315MDFRMF08'],
-              ['Ocupación', 'Profesora'],
+              ['Dirección', _details.direccion],
+              ['Teléfono', _details.telefono],
+              ['Correo Electrónico', _details.correo],
+              ['CURP', _details.curp],
+              ['Ocupación', _details.ocupacion],
             ]),
             const SizedBox(height: 36),
             _sectionTitle(
@@ -141,10 +144,10 @@ class _HistorialMedicoSofiaPageState extends State<HistorialMedicoSofiaPage> {
             const SizedBox(height: 36),
             _sectionTitle('Historial Familiar'),
             const SizedBox(height: 12),
-            _infoGrid(isMobile, const [
-              ['Enfermedades Hereditarias', 'Diabetes (padre)'],
+            _infoGrid(isMobile, [
+              ['Enfermedades Hereditarias', _details.antecedentesFamiliares],
               ['Antecedentes de Cáncer', 'Cáncer de mama (abuela materna)'],
-              ['Otras Condiciones', 'Hipertensión (madre)'],
+              ['Otras Condiciones', _details.historialFamiliarNotas],
             ]),
           ],
         );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'data/patient_repository.dart';
 import 'historial_carlos_page.dart';
+import 'historial_generico_page.dart';
 import 'historial_sofia_page.dart';
 import 'widgets/navbar.dart';
 import 'widgets/paciente_item.dart';
@@ -15,26 +17,11 @@ class ResultadosBusquedaPage extends StatelessWidget {
     required this.userName,
   });
 
-  List<Map<String, String>> get _pacientes => const [
-        {'id': 'sofia', 'nombre': 'Sofía Ramírez', 'fecha': '15/03/1988'},
-        {'id': 'carlos', 'nombre': 'Carlos Pérez', 'fecha': '20/04/1990'},
-        {'id': 'carlos_m', 'nombre': 'Carlos Mendoza', 'fecha': '22/07/1992'},
-        {'id': 'ana', 'nombre': 'Ana López', 'fecha': '10/11/1978'},
-      ];
-
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
-    final normalizedQuery = query.trim().toLowerCase();
-    final resultados = normalizedQuery.isEmpty
-        ? _pacientes
-        : _pacientes
-            .where(
-              (p) => p['nombre']!
-                  .toLowerCase()
-                  .contains(normalizedQuery),
-            )
-            .toList();
+    final repo = PatientRepository.instance;
+    final resultados = repo.searchSummaries(query);
 
     return Scaffold(
       appBar: Navbar(userName: userName),
@@ -71,21 +58,16 @@ class ResultadosBusquedaPage extends StatelessWidget {
                 else
                   ...resultados.map(
                     (p) {
-                      final nombre = p['nombre']!;
-                      final id = p['id']!;
-                      final canNavigate = _hasDetailPage(id);
+                      final canNavigate = _hasDetailPage(p.id);
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 28.0),
                         child: PacienteItem(
-                          nombre: nombre,
-                          fecha: p['fecha']!,
+                          nombre: p.nombre,
+                          fecha: p.fecha,
                           isMobile: isMobile,
                           onSelect: canNavigate
-                              ? () => _navigateToPatientDetail(
-                                    context,
-                                    id,
-                                    nombre,
-                                  )
+                              ? () =>
+                                  _navigateToPatientDetail(context, p.id, p.nombre)
                               : null,
                         ),
                       );
@@ -104,22 +86,24 @@ class ResultadosBusquedaPage extends StatelessWidget {
     String patientId,
     String nombre,
   ) {
-    Widget? destination;
+    late final Widget destination;
     if (patientId == 'sofia') {
       destination = HistorialMedicoSofiaPage(userName: userName);
     } else if (patientId == 'carlos') {
       destination = HistorialMedicoCarlosPage(userName: userName);
-    }
-
-    final page = destination;
-    if (page != null) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => page),
+    } else {
+      destination = HistorialMedicoGenericoPage(
+        userName: userName,
+        patientId: patientId,
       );
     }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => destination),
+    );
   }
 
   bool _hasDetailPage(String id) {
-    return id == 'sofia' || id == 'carlos';
+    return PatientRepository.instance.exists(id);
   }
 }
